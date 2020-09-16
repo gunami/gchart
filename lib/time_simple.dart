@@ -22,6 +22,8 @@ import 'dart:math';
 // EXCLUDE_FROM_GALLERY_DOCS_END
 import 'package:charts_flutter/flutter.dart' as charts;
 import 'package:flutter/material.dart';
+import 'package:intl/date_symbol_data_local.dart';
+import 'package:intl/intl.dart' show DateFormat;
 
 class SimpleTimeSeriesChart extends StatefulWidget {
   final int max_chart_count = 10;
@@ -30,6 +32,7 @@ class SimpleTimeSeriesChart extends StatefulWidget {
   //List<TimeSeriesSales> dataList;
   SimpleTimeSeriesChart(this.seriesList, {this.animate});
   List<TimeSeriesSales> qdata = List();
+  List<TimeSeriesSales> qdata2 = List();
 
   /// Creates a [TimeSeriesChart] with sample data and no transition.
   // factory SimpleTimeSeriesChart.withSampleData() {
@@ -45,6 +48,7 @@ class SimpleTimeSeriesChart extends StatefulWidget {
   // It is used for creating random series data to demonstrate animation in
   // the example app only.
   factory SimpleTimeSeriesChart.withRandomData() {
+    initializeDateFormatting('ko_KR', null).then((value) => null);
     return new SimpleTimeSeriesChart(_createRandomData());
   }
 
@@ -76,7 +80,8 @@ class SimpleTimeSeriesChart extends StatefulWidget {
     print(time);
     if (!qdata.isEmpty && qdata.length > max_chart_count) qdata.removeAt(0);
     qdata.add(TimeSeriesSales(time, random.nextInt(100)));
-
+    if (!qdata2.isEmpty && qdata2.length > max_chart_count) qdata2.removeAt(0);
+    qdata2.add(TimeSeriesSales(time, random.nextInt(100)));
     return [
       new charts.Series<TimeSeriesSales, DateTime>(
         id: 'Sales',
@@ -84,6 +89,13 @@ class SimpleTimeSeriesChart extends StatefulWidget {
         domainFn: (TimeSeriesSales sales, _) => sales.time,
         measureFn: (TimeSeriesSales sales, _) => sales.sales,
         data: qdata,
+      ),
+      new charts.Series<TimeSeriesSales, DateTime>(
+        id: 'Sales2',
+        colorFn: (_, __) => charts.MaterialPalette.deepOrange.shadeDefault,
+        domainFn: (TimeSeriesSales sales, _) => sales.time,
+        measureFn: (TimeSeriesSales sales, _) => sales.sales,
+        data: qdata2,
       )
     ];
   }
